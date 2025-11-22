@@ -1,0 +1,32 @@
+name: Build/release
+
+on: 
+  push:
+    branches:
+      - 'master'
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v5
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+
+      - name: Install Deps
+        run: bun install
+
+      - name: Package Electron
+        env: 
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: bunx electron-builder --publish onTag --linux
+
+      - name: Update Release
+        if: ${{ steps.regex-match.outputs.match != '' }}
+        uses: ncipollo/release-action@v1.20.0
+        with:
+          allowUpdates: true
+          token: ${{ secrets.GITHUB_TOKEN }}

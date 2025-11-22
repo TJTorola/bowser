@@ -1,7 +1,9 @@
 {
-  "name": "tjtorola--bowser",
-  "module": "index.ts",
-  "type": "module",
+  "name": "@tjtorola/bowser",
+  "version": "v0.0.0",
+  "author": "Tyler Torola <tjtorola@gmail.com>",
+  "description": "The Daemon Browser",
+  "module": "./src/index.ts",
   "scripts": {
     "start": "electron src"
   },
