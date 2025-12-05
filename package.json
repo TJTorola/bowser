@@ -1,5 +1,6 @@
 {
   "name": "@tjtorola/bowser",
+  "type": "module",
   "version": "v0.0.0",
   "author": "Tyler Torola <tjtorola@gmail.com>",
   "description": "The Daemon Browser",
