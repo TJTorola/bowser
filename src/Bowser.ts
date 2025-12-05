@@ -8,10 +8,11 @@ export default class Browser {
   }
 
   getFocusedBrowser = () => {
-    return (
-      this.windows.find((window) => window.browser.isFocused()) ||
-      this.windows[0]
-    );
+    return this.windows[0];
+  };
+
+  onWindowFocus = (window: Window) => {
+    this.windows = [window, ...this.windows.filter((w) => w !== window)];
   };
 
   openNew = (url: string) => {
@@ -25,7 +26,11 @@ export default class Browser {
       },
     }));
 
-    this.windows.push(window);
+    window.browser.on('focus', () => {
+      this.onWindowFocus(window);
+    });
+
+    this.windows = [window, ...this.windows];
     return window;
   };
 
