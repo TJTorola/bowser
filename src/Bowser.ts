@@ -7,7 +7,7 @@ export default class Browser {
     this.windows = [];
   }
 
-  getFocusedBrowser = () => {
+  getFocusedWindow = () => {
     return this.windows[0];
   };
 
@@ -35,7 +35,7 @@ export default class Browser {
   };
 
   open = (url: string) => {
-    const focusedBrowser = this.getFocusedBrowser();
-    if (focusedBrowser) focusedBrowser.loadURL(url);
+    const focusedWindow = this.getFocusedWindow();
+    if (focusedWindow) focusedWindow.loadURL(url);
   };
 }
