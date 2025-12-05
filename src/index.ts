@@ -7,7 +7,8 @@ if (app.requestSingleInstanceLock({ command, rest })) {
     const bowser = new Bowser();
 
     if (command === 'open' || command === 'open-new') {
-      bowser.openNew(rest[0] || 'https://apod.nasa.gov');
+      const location = rest.join(' ');
+      bowser.openNew(location || 'https://apod.nasa.gov');
     } else {
       throw new Error(`Unknown command "${command}"`);
     }
@@ -21,9 +22,11 @@ if (app.requestSingleInstanceLock({ command, rest })) {
         };
 
         if (command === 'open') {
-          bowser.open(rest[0] || 'https://apod.nasa.gov');
+          const location = rest.join(' ');
+          bowser.open(location || 'https://apod.nasa.gov');
         } else if (command === 'open-new') {
-          bowser.openNew(rest[0] || 'https://apod.nasa.gov');
+          const location = rest.join(' ');
+          bowser.openNew(location || 'https://apod.nasa.gov');
         } else {
           throw new Error(`Unknown command "${command}"`);
         }

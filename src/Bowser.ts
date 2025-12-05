@@ -15,8 +15,8 @@ export default class Browser {
     this.windows = [window, ...this.windows.filter((w) => w !== window)];
   };
 
-  openNew = (url: string) => {
-    const window = new Window(url);
+  openNew = (location: string) => {
+    const window = new Window(location);
 
     window.browser.webContents.setWindowOpenHandler((details) => ({
       action: 'allow',
@@ -34,8 +34,8 @@ export default class Browser {
     return window;
   };
 
-  open = (url: string) => {
+  open = (location: string) => {
     const focusedWindow = this.getFocusedWindow();
-    if (focusedWindow) focusedWindow.loadURL(url);
+    if (focusedWindow) focusedWindow.loadLocation(location);
   };
 }

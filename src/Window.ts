@@ -1,10 +1,11 @@
 import { BrowserWindow } from 'electron';
 import * as shortcuts from 'electron-shortcuts';
+import { locationToUrl } from './util.ts';
 
 export default class Window {
   browser: BrowserWindow;
 
-  constructor(url: string) {
+  constructor(location: string) {
     this.browser = new BrowserWindow({
       titleBarStyle: 'hidden',
       width: 800,
@@ -23,10 +24,13 @@ export default class Window {
     shortcuts.register('Ctrl+d', this.openDevTools, this.browser);
     shortcuts.register('Ctrl+r', this.reload, this.browser);
 
-    this.loadURL(url);
+    this.loadLocation(location);
   }
 
-  loadURL = (url: string) => this.browser.loadURL(url);
+  loadLocation = (location: string) => {
+    this.browser.loadURL(locationToUrl(location));
+  };
+
   goBack = () => this.browser.webContents.navigationHistory.goBack();
   goForward = () => this.browser.webContents.navigationHistory.goForward();
   openDevTools = () => this.browser.webContents.openDevTools();
