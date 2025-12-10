@@ -27,8 +27,12 @@ export default class Window {
     this.loadLocation(location);
   }
 
-  loadLocation = (location: string) => {
-    this.browser.loadURL(locationToUrl(location));
+  loadLocation = async (location: string) => {
+    try {
+      await this.browser.loadURL(locationToUrl(location));
+    } catch (error) {
+      this.browser.loadFile('./src/error.html');
+    }
   };
 
   goBack = () => this.browser.webContents.navigationHistory.goBack();
