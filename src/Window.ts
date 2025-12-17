@@ -17,7 +17,7 @@ export default class Window {
 
     this.#browser = new Browser();
     this.#navBar = new NavBar();
-    this.#browser.onUrlChange(this.#navBar.updateUrl);
+    this.#browser.onUrlChange(this.updateUrl);
 
     this.#base.contentView.addChildView(this.#browser.view);
     this.#base.contentView.addChildView(this.#navBar.view);
@@ -40,6 +40,11 @@ export default class Window {
     this.#base.on('focus', () => {
       callback();
     });
+  };
+
+  updateUrl = (url: string) => {
+    this.#base.title = url;
+    this.#navBar.updateUrl(url);
   };
 
   loadLocation = (location: string) => {
