@@ -28,6 +28,20 @@ export default class Window {
     this.loadLocation(location);
   }
 
+  get webContents() {
+    return this.browser.view.webContents;
+  }
+
+  setWindowOpenHandler = (callback: (url: string) => Electron.WebContents) => {
+    this.browser.setWindowOpenHandler(callback);
+  };
+
+  onFocus = (callback: () => unknown) => {
+    this.base.on('focus', () => {
+      callback();
+    });
+  };
+
   loadLocation = (location: string) => {
     this.browser.loadLocation(location);
   };

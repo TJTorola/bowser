@@ -15,18 +15,17 @@ export default class Bowser {
     this.windows = [window, ...this.windows.filter((w) => w !== window)];
   };
 
+  // Instead of allowing browserViews to just open new browserViews, override
+  // that behavior and instead create and register a new window object.
   openNew = (location: string) => {
     const window = new Window(location);
 
-    window.browser.view.webContents.setWindowOpenHandler((details) => ({
-      action: 'allow',
-      createWindow: () => {
-        const newWindow = this.openNew(details.url);
-        return newWindow.browser.view.webContents;
-      },
-    }));
+    window.setWindowOpenHandler((url) => {
+      const newWindow = this.openNew(url);
+      return newWindow.webContents;
+    });
 
-    window.base.on('focus', () => {
+    window.onFocus(() => {
       this.onWindowFocus(window);
     });
 

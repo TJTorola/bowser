@@ -28,6 +28,15 @@ export default class Browser {
     });
   };
 
+  setWindowOpenHandler = (callback: (url: string) => Electron.WebContents) => {
+    this.view.webContents.setWindowOpenHandler((details) => ({
+      action: 'allow',
+      createWindow: () => {
+        return callback(details.url);
+      },
+    }));
+  };
+
   setBounds = (parentBounds: Electron.Rectangle, navBarHeight: number) => {
     this.view.setBounds({
       x: 0,
