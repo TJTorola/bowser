@@ -27,6 +27,10 @@ export default class Window {
     this.navbar = new WebContentsView();
     this.navbar.webContents.loadFile('./src/navbar.html');
 
+    this.navbar.webContents.on('console-message', (_e, _l, message) => {
+      console.log(`[navbar]: ${message}`);
+    });
+
     this.base.contentView.addChildView(this.browser);
     this.base.contentView.addChildView(this.navbar);
     this.setBounds();

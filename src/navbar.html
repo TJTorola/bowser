@@ -13,8 +13,32 @@
     </style>
   </head>
   <body>
-    <main>
-      <div>Navbar placeholder</div>
-    </main>
+    <div id="current-url">Initializing...</div>
+    <script>
+      const ogConsole = {
+        log: console.log,
+        warn: console.warn,
+        error: console.error,
+        info: console.info,
+        debug: console.debug
+      };
+
+      ['log', 'warn', 'error', 'info', 'debug'].forEach(method => {
+        console[method] = (...args) => {
+          ogConsole[method].apply(console, args);
+          window.postMessage({
+            type: 'console-message',
+            method,
+            args: args.map(arg => {
+              try {
+                return JSON.stringify(arg);
+              } catch {
+                return String(arg);
+              }
+            })
+          }, '*');
+        };
+      });
+    </script>
   </body>
 </html>
