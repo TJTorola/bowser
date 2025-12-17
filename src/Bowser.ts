@@ -1,6 +1,6 @@
 import Window from './Window.ts';
 
-export default class Browser {
+export default class Bowser {
   windows: Array<Window>;
 
   constructor() {
