@@ -13,7 +13,6 @@ export default class Window {
       width: 800,
       height: 600,
       darkTheme: true,
-      // show: false,
     });
 
     this.browser = new Browser();
@@ -25,8 +24,6 @@ export default class Window {
     this.setBounds();
 
     this.base.on('resize', () => this.setBounds());
-
-    // this.browser.once('ready-to-show', () => this.base.show());
 
     this.loadLocation(location);
   }
