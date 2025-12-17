@@ -1,13 +1,12 @@
 import { BaseWindow, WebContentsView } from 'electron';
 import * as shortcuts from 'electron-shortcuts';
 import { locationToUrl } from './util.ts';
-
-const NAVBAR_HEIGHT = 24;
+import NavBar from './NavBar/index.ts';
 
 export default class Window {
   base: BaseWindow;
   browser: WebContentsView;
-  navbar: WebContentsView;
+  navBar: NavBar;
 
   constructor(location: string) {
     this.base = new BaseWindow({
@@ -24,22 +23,17 @@ export default class Window {
       },
     });
 
+    this.navBar = new NavBar();
+
     this.browser.webContents.on('did-navigate', (_, url) => {
-      this.updateNavbarUrl(url);
+      this.navBar.updateUrl(url);
     });
     this.browser.webContents.on('did-navigate-in-page', (_, url) => {
-      this.updateNavbarUrl(url);
-    });
-
-    this.navbar = new WebContentsView();
-    this.navbar.webContents.loadFile('./src/navbar.html');
-
-    this.navbar.webContents.on('console-message', (_e, _l, message) => {
-      console.log(`[navbar]: ${message}`);
+      this.navBar.updateUrl(url);
     });
 
     this.base.contentView.addChildView(this.browser);
-    this.base.contentView.addChildView(this.navbar);
+    this.base.contentView.addChildView(this.navBar.view);
     this.setBounds();
 
     this.base.on('resize', () => this.setBounds());
@@ -55,41 +49,16 @@ export default class Window {
   }
 
   setBounds = () => {
-    const { width, height } = this.base.getBounds();
+    const bounds = this.base.getBounds();
 
     this.browser.setBounds({
       x: 0,
       y: 0,
-      width,
-      height: height - NAVBAR_HEIGHT,
+      width: bounds.width,
+      height: bounds.height - this.navBar.height,
     });
 
-    this.navbar.setBounds({
-      x: 0,
-      y: height - NAVBAR_HEIGHT,
-      width,
-      height: NAVBAR_HEIGHT,
-    });
-  };
-
-  updateNavbarUrl = (url: string) => {
-    if (url.replace(/'/g, "\\'") !== url) {
-      console.log(
-        'Found potential javascript injection in URL, refusing to update',
-      );
-      console.log(`URL: '${url}'`);
-      return;
-    }
-
-    this.navbar.webContents
-      .executeJavaScript(
-        `
-        document.getElementById('current-url').textContent = '${url}';`,
-      )
-      .catch((err) => {
-        console.log('Failed to updateNavbarUrl');
-        console.log(err);
-      });
+    this.navBar.setBounds(bounds);
   };
 
   loadLocation = async (location: string) => {
