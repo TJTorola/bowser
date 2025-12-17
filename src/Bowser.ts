@@ -26,7 +26,7 @@ export default class Browser {
       },
     }));
 
-    window.browser.on('focus', () => {
+    window.base.on('focus', () => {
       this.onWindowFocus(window);
     });
 
