@@ -1,11 +1,10 @@
-import { BaseWindow, WebContentsView } from 'electron';
-import * as shortcuts from 'electron-shortcuts';
-import { locationToUrl } from './util.ts';
+import { BaseWindow } from 'electron';
 import NavBar from './NavBar/index.ts';
+import Browser from './Browser/index.ts';
 
 export default class Window {
   base: BaseWindow;
-  browser: WebContentsView;
+  browser: Browser;
   navBar: NavBar;
 
   constructor(location: string) {
@@ -17,22 +16,11 @@ export default class Window {
       // show: false,
     });
 
-    this.browser = new WebContentsView({
-      webPreferences: {
-        autoplayPolicy: 'document-user-activation-required',
-      },
-    });
-
+    this.browser = new Browser();
     this.navBar = new NavBar();
+    this.browser.onUrlChange(this.navBar.updateUrl);
 
-    this.browser.webContents.on('did-navigate', (_, url) => {
-      this.navBar.updateUrl(url);
-    });
-    this.browser.webContents.on('did-navigate-in-page', (_, url) => {
-      this.navBar.updateUrl(url);
-    });
-
-    this.base.contentView.addChildView(this.browser);
+    this.base.contentView.addChildView(this.browser.view);
     this.base.contentView.addChildView(this.navBar.view);
     this.setBounds();
 
@@ -40,37 +28,17 @@ export default class Window {
 
     // this.browser.once('ready-to-show', () => this.base.show());
 
-    // shortcuts.register('Ctrl+h', this.goBack, this.browser);
-    // shortcuts.register('Ctrl+l', this.goForward, this.browser);
-    // shortcuts.register('Ctrl+d', this.openDevTools, this.browser);
-    // shortcuts.register('Ctrl+r', this.reload, this.browser);
-
     this.loadLocation(location);
   }
+
+  loadLocation = (location: string) => {
+    this.browser.loadLocation(location);
+  };
 
   setBounds = () => {
     const bounds = this.base.getBounds();
 
-    this.browser.setBounds({
-      x: 0,
-      y: 0,
-      width: bounds.width,
-      height: bounds.height - this.navBar.height,
-    });
-
+    this.browser.setBounds(bounds, this.navBar.height);
     this.navBar.setBounds(bounds);
   };
-
-  loadLocation = async (location: string) => {
-    try {
-      await this.browser.webContents.loadURL(locationToUrl(location));
-    } catch (error) {
-      this.browser.webContents.loadFile('./src/error.html');
-    }
-  };
-
-  goBack = () => this.browser.webContents.navigationHistory.goBack();
-  goForward = () => this.browser.webContents.navigationHistory.goForward();
-  openDevTools = () => this.browser.webContents.openDevTools();
-  reload = () => this.browser.webContents.reload();
 }

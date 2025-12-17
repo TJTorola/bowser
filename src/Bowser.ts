@@ -18,11 +18,11 @@ export default class Browser {
   openNew = (location: string) => {
     const window = new Window(location);
 
-    window.browser.webContents.setWindowOpenHandler((details) => ({
+    window.browser.view.webContents.setWindowOpenHandler((details) => ({
       action: 'allow',
       createWindow: () => {
         const newWindow = this.openNew(details.url);
-        return newWindow.browser.webContents;
+        return newWindow.browser.view.webContents;
       },
     }));
 
