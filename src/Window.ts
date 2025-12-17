@@ -2,7 +2,7 @@ import { BaseWindow, WebContentsView } from 'electron';
 import * as shortcuts from 'electron-shortcuts';
 import { locationToUrl } from './util.ts';
 
-const NAVBAR_HEIGHT = 20;
+const NAVBAR_HEIGHT = 24;
 
 export default class Window {
   base: BaseWindow;
@@ -22,6 +22,13 @@ export default class Window {
       webPreferences: {
         autoplayPolicy: 'document-user-activation-required',
       },
+    });
+
+    this.browser.webContents.on('did-navigate', (_, url) => {
+      this.updateNavbarUrl(url);
+    });
+    this.browser.webContents.on('did-navigate-in-page', (_, url) => {
+      this.updateNavbarUrl(url);
     });
 
     this.navbar = new WebContentsView();
@@ -63,6 +70,26 @@ export default class Window {
       width,
       height: NAVBAR_HEIGHT,
     });
+  };
+
+  updateNavbarUrl = (url: string) => {
+    if (url.replace(/'/g, "\\'") !== url) {
+      console.log(
+        'Found potential javascript injection in URL, refusing to update',
+      );
+      console.log(`URL: '${url}'`);
+      return;
+    }
+
+    this.navbar.webContents
+      .executeJavaScript(
+        `
+        document.getElementById('current-url').textContent = '${url}';`,
+      )
+      .catch((err) => {
+        console.log('Failed to updateNavbarUrl');
+        console.log(err);
+      });
   };
 
   loadLocation = async (location: string) => {
