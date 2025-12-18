@@ -1,5 +1,6 @@
 import { WebContentsView } from 'electron';
-import { locationToUrl } from '../util.ts';
+import { locationToUrl } from '../util/index.ts';
+import * as hotkeys from '../util/hotkeys.ts';
 
 const WEB_PREFERENCES = {
   autoplayPolicy: 'document-user-activation-required' as const,
@@ -13,10 +14,10 @@ export default class Browser {
       webPreferences: WEB_PREFERENCES,
     });
 
-    // shortcuts.register('Ctrl+h', this.goBack, this.browser);
-    // shortcuts.register('Ctrl+l', this.goForward, this.browser);
-    // shortcuts.register('Ctrl+d', this.openDevTools, this.browser);
-    // shortcuts.register('Ctrl+r', this.reload, this.browser);
+    hotkeys.register('Ctrl+h', this.goBack, this.view.webContents);
+    hotkeys.register('Ctrl+l', this.goForward, this.view.webContents);
+    hotkeys.register('Ctrl+d', this.openDevTools, this.view.webContents);
+    hotkeys.register('Ctrl+r', this.reload, this.view.webContents);
   }
 
   onUrlChange = (callback: (url: string) => unknown) => {
