@@ -1,6 +1,7 @@
 import { BaseWindow } from 'electron';
 import NavBar from './NavBar/index.ts';
 import Browser from './Browser/index.ts';
+import { writeHistoryLine } from './util/fs.ts';
 
 export default class Window {
   #base: BaseWindow;
@@ -45,6 +46,7 @@ export default class Window {
   updateUrl = (url: string) => {
     this.#base.title = url;
     this.#navBar.updateUrl(url);
+    writeHistoryLine({ url });
   };
 
   loadLocation = (location: string) => {

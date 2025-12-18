@@ -24,9 +24,6 @@ export default class Browser {
     this.view.webContents.on('did-navigate', (_, url) => {
       callback(url);
     });
-    this.view.webContents.on('did-navigate-in-page', (_, url) => {
-      callback(url);
-    });
   };
 
   setWindowOpenHandler = (callback: (url: string) => Electron.WebContents) => {
